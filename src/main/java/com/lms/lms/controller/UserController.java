@@ -1,39 +1,31 @@
 package com.lms.lms.controller;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+
 import com.lms.lms.model.User;
 import com.lms.lms.repositories.UserRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-
-
-
+import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
-  
 
-    @GetMapping("/home")
-    public String Home(){
-        return "This is the home page";
+    // Get all users (protected by JWT)
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    @GetMapping("/all")
-    public List<User> getUsers() {
-        return userRepository.findAll(); 
+    // Get a user by ID
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
-    
-
-    @PostMapping("/register")
-    public User createUser(@RequestBody User user) {
-       return userRepository.save(user);
-    }
-
-    
 }

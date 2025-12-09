@@ -3,6 +3,14 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+# local env
+.env
+*.env
+
+
+# Ignore application properties (contains DB credentials)
+application.properties
+
 
 ### STS ###
 .apt_generated

@@ -14,7 +14,6 @@ public class JwtUtil {
 
     private final SecretKey key;
 
-    // Spring injects the value from application properties
     public JwtUtil(@Value("${jwt.secret}") String secret) {
         if (secret == null || secret.length() < 32) {
             throw new RuntimeException("JWT_SECRET not set or too short (must be 32+ chars)!");
@@ -22,9 +21,10 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String username) {
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
                 .signWith(key)
@@ -34,6 +34,11 @@ public class JwtUtil {
     public String extractUsername(String token) {
         return parseToken(token).getBody().getSubject();
     }
+
+    public String extractRole(String token) {
+    return parseToken(token).getBody().get("role", String.class);
+}
+
 
     public boolean validateToken(String token, String username) {
         String tokenUsername = extractUsername(token);
